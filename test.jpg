@@ -1,0 +1,4 @@
+image = cv2.imread(r"C:\Users\ARUN\Documents\Project\FaceRecog\test.jpg")
+if image is None:
+    print("❌ Could not load image. Check file path!")
+    exit()

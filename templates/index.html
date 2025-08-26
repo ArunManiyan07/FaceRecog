@@ -1,25 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Face Detection App</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Face Recognition</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>👤 Face Detection</h1>
-    <p>Upload an image to detect faces.</p>
-
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="image" accept="image/*" required>
-      <button type="submit">Detect Faces</button>
+    <h1>Upload an image for Face Detection</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
     </form>
 
-    <div class="result">
-      <h2>Result:</h2>
-      <img id="output" src="static/result.jpg" alt="Detected Face Output">
-    </div>
-  </div>
+    {% if result_image %}
+        <h2>Detected Faces: {{ face_count }}</h2>
+        <img src="{{ url_for('static', filename=result_image) }}" alt="Result Image">
+    {% endif %}
 </body>
 </html>

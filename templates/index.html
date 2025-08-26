@@ -6,13 +6,24 @@
 </head>
 <body>
     <div class="container">
+
         <!-- Upload Section -->
         <div class="upload-card">
-            <h1>Upload an image for Face Detection</h1>
+            <h1>Upload an image or Use Webcam</h1>
+            
+            <!-- File Upload -->
             <form action="/" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" required>
                 <button type="submit">Upload</button>
             </form>
+
+            <hr style="margin:20px 0;">
+
+            <!-- Webcam -->
+            <video id="video" width="320" height="240" autoplay></video>
+            <br>
+            <button id="capture">📸 Capture</button>
+            <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
         </div>
 
         <!-- Result Section -->
@@ -21,9 +32,41 @@
                 <h2>Detected Faces: {{ face_count }}</h2>
                 <img src="{{ url_for('static', filename=result_image) }}" alt="Result Image">
             {% else %}
-                <h2>No Image Uploaded</h2>
+                <h2>No Image Yet</h2>
             {% endif %}
         </div>
     </div>
+
+    <!-- Webcam Script -->
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture');
+
+        // Access webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing webcam: ", err);
+            });
+
+        // Capture frame & send to Flask
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob((blob) => {
+                let formData = new FormData();
+                formData.append("file", blob, "webcam.jpg");
+
+                fetch("/upload_webcam", {
+                    method: "POST",
+                    body: formData
+                }).then(res => window.location.reload());
+            }, "image/jpeg");
+        });
+    </script>
 </body>
 </html>
